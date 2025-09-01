@@ -5,7 +5,7 @@ import {
   getDocenteById,
   updateDocente,
 } from "../docente.services";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   docenteCreateSchema,
@@ -19,13 +19,21 @@ import {
   withNotifications,
   type WithNotificationsProps,
 } from "../../shared/withNotifications";
+import type { Especialidad } from "../especialidad.types";
+import { getEspecialidades } from "../especialidad.services";
+import { FormSelect } from "../common/FormSelect";
 
 type Props = {
   idDocente?: string;
 } & WithNotificationsProps;
 
+
+
+
+
 export const DocenteFormImpl = ({ idDocente, notify }: Props) => {
   const navigate = useNavigate();
+  const [especialidades, setEspecialidades] = useState<Especialidad[]>([]);
 
   const isEdit = Boolean(idDocente);
   const schema = isEdit ? docenteUpdateSchema : docenteCreateSchema;
@@ -64,6 +72,23 @@ export const DocenteFormImpl = ({ idDocente, notify }: Props) => {
     }
   };
 
+  
+  
+   // cargar especialidades al montar
+   useEffect(() => {
+    const fetchEspecialidades = async () => {
+      try {
+        const data = await getEspecialidades();
+        setEspecialidades(data);
+      } catch (error) {
+        console.error("Error cargando especialidades", error);
+      }
+    };
+    fetchEspecialidades();
+  }, []);
+  
+  
+  // cargar datos del docente si se está editando
   useEffect(() => {
     if (idDocente) {
       getDocenteById(idDocente).then((data) => {
@@ -78,6 +103,8 @@ export const DocenteFormImpl = ({ idDocente, notify }: Props) => {
       });
     }
   }, [idDocente, reset]);
+
+   
 
   return (
     <form
@@ -100,19 +127,25 @@ export const DocenteFormImpl = ({ idDocente, notify }: Props) => {
           error={errors.nombreDocente}
           placeholder="Ingresa el nombre"
         />
-        <FormField
-          label="Cod Especialidad"
-          registration={register("codEspecialidad")}
-          error={errors.codEspecialidad}
-          placeholder="Ingresa la especialidad"
-        />
+
+        <FormSelect
+         label="Especialidad"
+         registration={register("codEspecialidad")}
+         error={errors.codEspecialidad}
+         options={especialidades.map((e) => ({
+         value: e.codEspecialidad,
+         label: e.nombreEspecialidad,
+         }))}
+         />
+
          <FormField
           label="Telefono"
           registration={register("telefono")}
           error={errors.telefono}
           placeholder="Ingresa el telefono"
         />
-             <FormField
+         
+         <FormField
           label="Edad"
           type="number"
           registration={register("edad")}

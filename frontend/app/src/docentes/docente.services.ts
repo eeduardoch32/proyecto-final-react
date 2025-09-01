@@ -49,3 +49,10 @@ export const deleteDocente = async (id: string): Promise<void> => {
   });
   if (!res.ok) throw new Error("No se pudo eliminar el docente");
 };
+
+
+export const getDocentes2 = async (): Promise<Docente[]> => {
+  const res = await fetch(BASE_URL+`/listar`);
+  if (!res.ok) throw new Error("Error al obtener los docentes");
+  return res.json();
+};

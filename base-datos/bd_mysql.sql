@@ -42,6 +42,19 @@ values
 ('D0001','Aristedes Novoa','E0004','998721100',50,'anovoa@gmail.com');
 
 
+
+DELIMITER $$ 
+CREATE PROCEDURE sp_listar_docente ()
+BEGIN 
+Select d.id_docente as idDocente, d.cod_docente as codDocente, d.nombre_docente as nombreDocente,
+d.cod_especialidad as codEspecialidad,
+d.telefono as telefono, d.edad as edad, d.correo as correo,e.nombre_especialidad as nombreEspecialidad
+ FROM Docente d 
+inner join especialidad e on (d.cod_especialidad=e.cod_especialidad);
+
+END$$ 
+DELIMITER ; 
+
 select * from usuario;
 select * from especialidad;
 select * from docente;

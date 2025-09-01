@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { deleteDocente, getDocentes } from "../docente.services";
+import { deleteDocente, getDocentes, getDocentes2 } from "../docente.services";
 import type { Docente } from "../docente.types";
 import { Link, useLocation } from "react-router-dom";
 import { ExcelService } from "../../shared/services/excelService.services";
 import { PdfService } from "../../shared/services/pdfService.services";
 import { LogoutButton } from "../../shared/components/LogoutButton";
+import { toast } from "react-toastify";
+import { confirmDialog } from "../../shared/components/ConfirmDialog";
 
 export const DocenteListPage = () => {
   const [docentes, setDocentes] = useState<Docente[]>([]);
@@ -13,8 +15,10 @@ export const DocenteListPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5); // cantidad de registros por página
 
+  const [isConfirming, setIsConfirming] = useState(false);
+
   useEffect(() => {
-    getDocentes().then(setDocentes);
+    getDocentes2().then(setDocentes);
   }, []);
 
   useEffect(() => {
@@ -30,18 +34,33 @@ export const DocenteListPage = () => {
 
   
 
-    const handleDeleteClick = async (id: string) => {
-    if (confirm("¿Seguro que deseas eliminar este docente?")) {
+
+
+  const handleDeleteClick = (id: string) => {
+
+     if (isConfirming) return; //evita que se abra más de una confirmación
+     setIsConfirming(true);
+
+  confirmDialog({
+    title: "Eliminar docente",
+    message: "¿Estás seguro de que deseas eliminar este docente?",
+    confirmText: "Sí, eliminar",
+    cancelText: "Cancelar",
+    onConfirm: async () => {
       try {
         await deleteDocente(id);
         setDocentes((prev) => prev.filter((d) => String(d.idDocente) !== id));
-        alert("Docente eliminado correctamente");
+        toast.success("Docente eliminado correctamente");
       } catch (err) {
         console.error(err);
-        alert("Error al eliminar el docente");
+        toast.error("Error al eliminar el docente");
       }
-    }
-  };
+    },
+    onCancel: () => {
+      setIsConfirming(false); // ✅ si cancela, también habilitamos de nuevo
+    },
+  });
+};
 
     // --- Paginación ---
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -49,7 +68,14 @@ export const DocenteListPage = () => {
   const currentDocentes = docentes.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(docentes.length / itemsPerPage);
 
-  
+  const labels = {
+  codDocente: "Código",
+  nombreDocente: "Nombre",
+  codEspecialidad: "Especialidad",
+  telefono: "Teléfono",
+  edad: "Edad",
+  correo: "Correo"
+  };
 
   return (
 
@@ -60,7 +86,7 @@ export const DocenteListPage = () => {
       <div className="flex flex-wrap gap-4 justify-between mb-6">
         <div className="flex gap-2 flex-wrap">
               <button
-  onClick={() => ExcelService.exportToExcel(docentes,"docentes")}
+  onClick={() => ExcelService.exportToExcel(docentes,"docentes",labels,"Lista de Docentes")}
    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
 >
   Exportar Excel
@@ -93,7 +119,7 @@ export const DocenteListPage = () => {
           <tr>
             <th className="p-3">Cod Docente</th>
             <th className="p-3">Nombre Docente</th>
-            <th className="p-3">Cod Especialidad</th>
+            <th className="p-3">Especialidad</th>
             <th className="p-3">Telefono</th>
             <th className="p-3">Edad</th>
             <th className="p-3">Correo</th>
@@ -106,7 +132,7 @@ export const DocenteListPage = () => {
                 className="border-t hover:bg-gray-50 transition-colors">
               <td className="p-3">{docente.codDocente}</td>
               <td className="p-3">{docente.nombreDocente}</td>
-              <td className="p-3">{docente.codEspecialidad}</td>
+              <td className="p-3">{docente.nombreEspecialidad}</td>
               <td className="p-3">{docente.telefono}</td>
               <td className="p-3">{docente.edad}</td>
               <td className="p-3">{docente.correo}</td>
@@ -118,12 +144,17 @@ export const DocenteListPage = () => {
                   Editar
                 </Link>
 
+         
+
                 <button
-                  onClick={() => handleDeleteClick(docente.idDocente.toString())}
-                  className="text-red-600 hover:underline"
-                >
-                  Eliminar
-                </button>
+  disabled={isConfirming}
+  onClick={() => handleDeleteClick(docente.idDocente.toString())}
+  className={`text-red-600 hover:underline ${
+    isConfirming ? "opacity-50 cursor-not-allowed" : ""
+  }`}
+>
+  Eliminar
+</button>
               </td>
             </tr>
           ))}

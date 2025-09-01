@@ -6,4 +6,5 @@ export interface Docente {
   telefono: string;
   edad: string;
   correo: string;
+  nombreEspecialidad: string;
 }
