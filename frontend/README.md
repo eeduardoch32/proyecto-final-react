@@ -29,19 +29,36 @@ Este proyecto forma parte del curso **React.js desde Cero Developer**, cuyo obje
 
 ## Dependencias
 
-- react-dom: "^19.1.0" → Renderizado de componentes en el DOM.
+- @hookform/resolvers: "^5.2.1" → Conectores para usar Zod, Yup u otras librerías de validación junto con react-hook-form.
 
-- react-hook-form: "^7.62.0" → Manejo eficiente de formularios.
+- @tailwindcss/vite: "^4.1.11" → Plugin que integra TailwindCSS directamente con Vite para compilación más rápida.
 
-- react-router-dom: "^7.7.1" → Sistema de enrutamiento para SPA.
+- exceljs: "^4.4.0" → Generación y manipulación de archivos Excel (.xlsx).
 
-- react-toastify: "^11.0.5" → Notificaciones en pantalla.
+- file-saver: "^2.0.5" → Permite descargar archivos en el navegador (ej. exportar Excel o PDF).
 
-- sweetalert2: "^11.22.3" → Alertas modernas y personalizables.
+- jspdf: "^3.0.2" → Generación de archivos PDF desde el frontend.
+
+- jspdf-autotable: "^5.0.2" → Extensión de jspdf para crear tablas automáticamente en los PDF.
+
+- react: "^19.1.0" → Biblioteca principal para construir interfaces de usuario.
+
+- react-dom: "^19.1.0" → Renderizado de componentes React en el navegador.
+
+- react-hook-form: "^7.62.0" → Manejo optimizado de formularios en React.
+
+- react-icons: "^5.4.0" → Colección de iconos listos para usar en componentes React.
+
+- react-router-dom: "^7.7.1" → Enrutamiento para aplicaciones SPA con React.
+
+- react-toastify: "^11.0.5" → Notificaciones emergentes y configurables.
+
+- sweetalert2: "^11.22.3" → Alertas modernas, con soporte para modales personalizables.
 
 - tailwindcss: "^4.1.11" → Framework CSS para diseño rápido y responsivo.
 
-- zod: "^4.0.14" → Validación de datos y esquemas.
+- zod: "^4.0.14" → Validación de esquemas y tipado para formularios o datos.
+
 
 ## Autor  
  Raul Eduardo Chavez Espinoza  
